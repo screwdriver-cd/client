@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "Screwdriver CLI",
   "main": "index.js",
+  "bin": {
+    "sd": "./bin/client.js"
+  },
   "scripts": {
     "pretest": "eslint .",
     "test": "jenkins-mocha --recursive"
@@ -36,5 +39,12 @@
     "eslint-plugin-jsx-a11y": "^1.2.2",
     "eslint-plugin-react": "^5.1.1",
     "jenkins-mocha": "^2.6.0"
+  },
+  "dependencies": {
+    "commander": "^2.9.0",
+    "configrc": "^0.1.2",
+    "swagger-client": "^2.1.15",
+    "vorpal": "^1.11.2",
+    "winston": "^2.2.0"
   }
 }
