@@ -3,12 +3,14 @@ package command
 import(
 	"strconv"
 	"strings"
+
 	"github.com/urfave/cli"
 	sd "github.com/screwdriver-cd/client/client"
 	v3 "github.com/screwdriver-cd/client/client/v3"
 	model "github.com/screwdriver-cd/client/models"
 )
 
+// buildsFilterJobs returns the passed v3.GetV3BuildsOK object filters out builds whose jobID does not match what was passed in as flag jobID
 func buildsFilterJobs(resp *v3.GetV3BuildsOK, c *cli.Context) *v3.GetV3BuildsOK {
 	filters := c.String("jobID")
 	if strings.Compare(filters, "") != 0 {
@@ -23,6 +25,7 @@ func buildsFilterJobs(resp *v3.GetV3BuildsOK, c *cli.Context) *v3.GetV3BuildsOK 
 	return resp
 }
 
+// buildFilterStatus filters the builds by status that was passed in as flag status. returns the original v3.GetV3BuildsOK object
 func buildsFilterStatus(resp *v3.GetV3BuildsOK, c *cli.Context) *v3.GetV3BuildsOK {
 	filters := c.String("status")
 	if strings.Compare(filters, "") != 0 {
@@ -37,7 +40,10 @@ func buildsFilterStatus(resp *v3.GetV3BuildsOK, c *cli.Context) *v3.GetV3BuildsO
 	return resp
 }
 
-// Builds List endpoint
+// BuildList is called by the client command builds-list
+// if # args is 0, defaults to listing out 50 builds on page 1
+// if # args is 1, gets the build with the id passed in as the first argument of the call
+// if # args is 2, gets the first argument number of builds, and the page #
 func BuildList(c *cli.Context) error {
 	if len(c.Args()) == 0 {
 		resp, err := sd.Default.V3.GetV3Builds(nil)

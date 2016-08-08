@@ -1,10 +1,10 @@
 package main
 
 import(
+	"os"
+
 	"github.com/urfave/cli"
 	"github.com/screwdriver-cd/client/commands"
-
-	"os"
 )
 
 func main(){
@@ -50,9 +50,4 @@ func main(){
 			},
 	}
 	app.Run(os.Args)
-	// b, err := helpers.GetJob("33e8535c1f1efcd52d867272eb8ec2127347e0c2")
-	// if err != nil {
-	// 	fmt.Println(err)	
-	// }
-	// fmt.Println(string(b))
 }

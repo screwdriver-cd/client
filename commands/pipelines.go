@@ -2,22 +2,16 @@ package command
 
 import(
 	"strconv"
-	"fmt"
-	"encoding/json"
+
 	"github.com/urfave/cli"
 	sd "github.com/screwdriver-cd/client/client"
 	v3 "github.com/screwdriver-cd/client/client/v3"
 )
 
-func formattedPrint(a ...interface{}){
-	m, err := json.MarshalIndent(a, " ", "  ")
-	if err != nil {
-		fmt.Println(err)	
-	}
-	fmt.Println(string(m))
-}
-
-// PipelinesList handles the get endpoints for pipeliens
+// PipelinesList handles the get endpoints for pipelines command
+// When number of args are 0, it defaults to getting 50 responses on the first page
+// When number of args is 2, the first argument is the number of responses, and the second is the page number
+// Prints out information regarding pipelines
 func PipelinesList(c *cli.Context) error {
 	if len(c.Args()) == 0 {
 		resp, err := sd.Default.V3.GetV3Pipelines(nil)

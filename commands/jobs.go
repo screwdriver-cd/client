@@ -3,12 +3,14 @@ package command
 import(
 	"strconv"
 	"strings"
+
 	"github.com/urfave/cli"
 	sd "github.com/screwdriver-cd/client/client"
 	v3 "github.com/screwdriver-cd/client/client/v3"
 	model "github.com/screwdriver-cd/client/models"
 )
 
+// jobFilterPipeline filters jobs by pipelineID returns the original v3.GetV3JobsOK object
 func jobsFilterPipeline(resp *v3.GetV3JobsOK, c *cli.Context) *v3.GetV3JobsOK {
 	filters := c.String("pipelineID")
 	if strings.Compare(filters, "") != 0 {
@@ -24,6 +26,9 @@ func jobsFilterPipeline(resp *v3.GetV3JobsOK, c *cli.Context) *v3.GetV3JobsOK {
 }
 
 // JobsList handles the GET endpoints for jobs
+// if # args is 0, prints the first 50 jobs on page 1
+// if # args is 1, prints the job whose id is the argument
+// if @ args is 2, it prints the first argument number of jobs, on the second argument page number
 func JobsList(c *cli.Context) error {
 	if len(c.Args()) == 0 {
 		resp, err := sd.Default.V3.GetV3Jobs(nil)
