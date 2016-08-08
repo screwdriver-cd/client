@@ -4,7 +4,7 @@
 
 ## Building from source  
 1. Clone down the go-swagger library into github.com/go-swagger/go-swagger  
-2. `$ git checkout tags/0.5.0 in the go-swagger library`
+2. `$ git checkout tags/0.5.0` in the go-swagger directory
 3. Navigate into screwdriver client run `$ go get` to install dependencies
 4. Run `$ go build` to create the binary
 
