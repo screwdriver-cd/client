@@ -10,8 +10,8 @@ import(
 	sd "github.com/screwdriver-cd/client/client"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"github.com/go-swagger/go-swagger/strfmt"
-	"time"
+	// "github.com/go-swagger/go-swagger/strfmt"
+	// "time"
 )
 
 var testBuild = [] struct {
@@ -59,14 +59,14 @@ var testBuild = [] struct {
 
 func createMocks() model.ListOfBuilds{
 
-	timeFormat := "2006-01-02T15:04:05Z0700"
+	// timeFormat := "2006-01-02T15:04:05Z0700"
 	ret := model.ListOfBuilds{}
 	for _, element := range testBuild{
-			t,_:= time.Parse(timeFormat, element.CreateTime)
+			// t,_:= time.Parse(timeFormat, element.CreateTime)
 			tmpObj := model.GetBuild{
 				Cause: element.Cause,
 				Container: &element.Container,
-				CreateTime: strfmt.Date(t),
+				CreateTime: element.CreateTime,
 				ID: element.Id,
 				JobID: element.JobId,
 				Sha: &element.Sha,
@@ -83,7 +83,7 @@ func TestBuildsFilterJobs(t *testing.T){
 	os.Args = []string{"builds","--jobID", idToFilter}
 	testApp.Name = "builds"
 	testApp.Flags = []cli.Flag{
-					cli.StringFlag{Name:"jobID",},	
+					cli.StringFlag{Name:"jobID",},
 	}
 	gv3BuildsOK := &v3.GetV3BuildsOK{}
 	gv3BuildsOK.Payload = createMocks()
@@ -91,9 +91,9 @@ func TestBuildsFilterJobs(t *testing.T){
 		res := buildsFilterJobs(gv3BuildsOK, c)
 		for _, element := range res.Payload{
 				if element.JobID != idToFilter{
-						t.Fail()	
+						t.Fail()
 				}
-		}	
+		}
 		return nil
 	}
 	testApp.Run(os.Args)
@@ -106,7 +106,7 @@ func TestBuildsFilterStatus(t *testing.T){
 	testApp.Name="builds"
 	testApp.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name: "status",	
+			Name: "status",
 		},
 	}
 	gv3BuildsOK := &v3.GetV3BuildsOK{}
@@ -115,35 +115,58 @@ func TestBuildsFilterStatus(t *testing.T){
 		res := buildsFilterStatus(gv3BuildsOK, c)
 		for _, element := range res.Payload{
 				if element.Status != statusToFilter {
-					t.Fail()	
+					t.Fail()
 				}
-		}		
+		}
 		return nil
 	}
 	testApp.Run(os.Args)
 }
 
 func TestBuildRequestGetBuildList(t *testing.T){
-		// httpmock.Activate()
-		// defer httpmock.DeactivateAndReset()
-    //
-		// httpmock.RegisterResponder("get", "http://a4677c9873c9611e6aa7102b92f75d5c-1135862614.us-west-2.elb.amazonaws.com/v3/",
-		// httpmock.NewStringResponder(200, `[{"sha": "6ab7a23b73310b26f2c6939cd8150a533500a95b","id": "f087bc435e7d2c1cb0a8ec463a348ed0f280b734","createTime": "2016-08-08T20:55:45.277Z","cause": "Started by user nkatzman","jobId": "bc5aa345891e0704972a315d01e93e95afd7ae6a","number": 1470689745277,"container": "node:4","status": "QUEUED"}]`))
-		// 	resp, err := buildRequestGetBuildList(sd.Default)
-		// 	if err != nil {
-		// 		t.Fail()
-		// 	}
-		// 	fmt.Println("past fail")
-		// 	fmt.Println(len(resp.Payload))
-		// 	fmt.Println("yo")
-		// 	assert := assert.New(t)
-		// 	// assert.Equal(*resp.Payload[0].Sha, "6ab7a23b73310b26f2c6939cd8150a533500a95b", "Equal Sha")
-		// 	assert.Equal(resp.Payload[0].ID, "f087bc435e7d2c1cb0a8ec463a348ed0f280b734", "Equal IDs")
-		// 	// assert.Equal(resp.Payload[0].CreateTime, "2016-08-08T20:55:45.277Z", "Equal create times")
-		// 	// assert.Equal(resp.Payload[0].Status, "QUEUED", "Equal status")
-		// 	// assert.Equal(resp.Payload[0].Cause, "Started by user nkatzman", "Assert, started by nkatzman")
-		// 	fmt.Println("outofBuildRequest")
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("get", "http://a4677c9873c9611e6aa7102b92f75d5c-1135862614.us-west-2.elb.amazonaws.com/v3/",
+	httpmock.NewStringResponder(200, `[
+	  {
+	    "id": "056e7a98956c8c581f33c302072a180b9b42478e",
+	    "jobId": "4f306e3b577a022ac95b7624e4ddd30f1b7309ac",
+	    "number": 1470960955370,
+	    "container": "node:4",
+	    "cause": "Started by user jer",
+	    "sha": "12d29f57028bdfdbecca1aef041902e8cb59f2ff",
+	    "createTime": "2016-08-12T00:15:55.370Z",
+	    "status": "QUEUED"
+	  },
+	  {
+	    "id": "f087bc435e7d2c1cb0a8ec463a348ed0f280b734",
+	    "jobId": "bc5aa345891e0704972a315d01e93e95afd7ae6a",
+	    "number": 1470689745277,
+	    "container": "node:4",
+	    "cause": "Started by user nkatzman",
+	    "sha": "6ab7a23b73310b26f2c6939cd8150a533500a95b",
+	    "createTime": "2016-08-08T20:55:45.277Z",
+	    "status": "QUEUED"
+	  }]`))
 }
+// func TestBuildRequestGetBuildList(t *testing.T){
+// 		httpmock.Activate()
+// 		defer httpmock.DeactivateAndReset()
+//
+// 		httpmock.RegisterResponder("get", "http://a4677c9873c9611e6aa7102b92f75d5c-1135862614.us-west-2.elb.amazonaws.com/v3/",
+// 		httpmock.NewStringResponder(200, `[{"sha": "6ab7a23b73310b26f2c6939cd8150a533500a95b","id": "f087bc435e7d2c1cb0a8ec463a348ed0f280b734","createTime": "2016-08-08T20:55:45.277Z","cause": "Started by user nkatzman","jobId": "bc5aa345891e0704972a315d01e93e95afd7ae6a","number": 1470689745277,"container": "node:4","status": "QUEUED"},{"sha": "yolo", "id": "swagger}]`))
+// 			resp, err := buildRequestGetBuildList(sd.Default)
+// 			if err != nil {
+// 				t.Fail()
+// 			}
+// 			assert := assert.New(t)
+// 			// assert.Equal(*resp.Payload[0].Sha, "6ab7a23b73310b26f2c6939cd8150a533500a95b", "Equal Sha")
+// 			assert.Equal(resp.Payload[0].ID, "f087bc435e7d2c1cb0a8ec463a348ed0f280b734", "Equal IDs")
+// 			// assert.Equal(resp.Payload[0].CreateTime, "2016-08-08T20:55:45.277Z", "Equal create times")
+// 			// assert.Equal(resp.Payload[0].Status, "QUEUED", "Equal status")
+// 			// assert.Equal(resp.Payload[0].Cause, "Started by user nkatzman", "Assert, started by nkatzman")
+// }
 
 func TestBuildRequestGetID(t *testing.T){
 	httpmock.Activate()
@@ -152,7 +175,7 @@ func TestBuildRequestGetID(t *testing.T){
 	httpmock.NewStringResponder(200, `[{"sha": "6ab7a23b73310b26f2c6939cd8150a533500a95b","id": "f087bc435e7d2c1cb0a8ec463a348ed0f280b734","createTime": "2016-08-08T20:55:45.277Z","cause": "Started by user nkatzman","jobId": "bc5aa345891e0704972a315d01e93e95afd7ae6a","number": 1470689745277,"container": "node:4","status": "QUEUED"}]`))
 	resp, err := buildRequestGetID(sd.Default, "f087bc435e7d2c1cb0a8ec463a348ed0f280b734")
 	if err != nil {
-		t.Fail()	
+		t.Fail()
 	}
 	assert := assert.New(t)
 	assert.Equal(*resp.Payload.Sha, "6ab7a23b73310b26f2c6939cd8150a533500a95b", "Equal Sha")
@@ -160,4 +183,4 @@ func TestBuildRequestGetID(t *testing.T){
 	assert.Equal(resp.Payload.CreateTime, "2016-08-08T20:55:45.277Z", "Equal create times")
 	assert.Equal(resp.Payload.Status, "QUEUED", "Equal status")
 	assert.Equal(resp.Payload.Cause, "Started by user nkatzman", "Assert, started by nkatzman")
-} 
+}

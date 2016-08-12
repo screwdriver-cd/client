@@ -10,10 +10,16 @@
 
 ## Building from source  
 1. Clone down the go-swagger library into github.com/go-swagger/go-swagger  
+<<<<<<< HEAD
 2. `$ git checkout tags/0.5.0 in the go-swagger library`
 3. Ensure that the client and models directories have been generated according to the swagger standard
 4. Navigate into screwdriver client run `$ go get` to install dependencies
 5. Run `$ go build -o goclient` to create the binary
+=======
+2. `$ git checkout tags/0.5.0` in the go-swagger directory
+3. Navigate into screwdriver client run `$ go get` to install dependencies
+4. Run `$ go build` to create the binary
+>>>>>>> 1269ef296fd9986c0a81150adcb16b3b1b230e05
 
 ## Usage
 `$ ./goclient <command-name>`
