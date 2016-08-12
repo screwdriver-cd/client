@@ -25,40 +25,37 @@ func jobsFilterPipeline(resp *v3.GetV3JobsOK, c *cli.Context) *v3.GetV3JobsOK {
 	return resp
 }
 
+func buildRequestGetJobList(trans *sd.ScrewdriverAPIDocumentation) (*v3.GetV3JobsOK, error){
+	return trans.V3.GetV3Jobs(nil)	
+}
+
+func buildRequestGetJobListParams(trans *sd.ScrewdriverAPIDocumentation, count int64, page int64)(*v3.GetV3JobsOK, error){
+	params := v3.NewGetV3JobsParams().WithCount(&count).WithPage(&page)
+	return trans.V3.GetV3Jobs(params)
+}
+
 // JobsList handles the GET endpoints for jobs
 // if # args is 0, prints the first 50 jobs on page 1
-// if # args is 1, prints the job whose id is the argument
-// if @ args is 2, it prints the first argument number of jobs, on the second argument page number
+// if # args is 2, it prints the first argument number of jobs, on the second argument page number
 func JobsList(c *cli.Context) error {
 	if len(c.Args()) == 0 {
-		resp, err := sd.Default.V3.GetV3Jobs(nil)
+		resp, err := buildRequestGetJobList(sd.Default)
 		if err != nil {
 			return cli.ShowSubcommandHelp(c)
 		}
 		resp = jobsFilterPipeline(resp, c)
 		formattedPrint(resp)
-	} else if len(c.Args()) == 1 {
-		args := c.Args()
-		params := v3.NewGetV3JobsIDParams().WithID(args[0])
-		resp, err := sd.Default.V3.GetV3JobsID(params)
-		if err != nil {
-			return cli.ShowSubcommandHelp(c)	
-		}
-		formattedPrint(resp)
 	} else if len(c.Args()) == 2{
 		args := c.Args()	
-		count, err := strconv.Atoi(args[0])
+		count, err := strconv.Atoi(args[COUNTPARAM])
 		if err != nil {
 			return cli.ShowSubcommandHelp(c)	
 		}
-		page, err := strconv.Atoi(args[1])
+		page, err := strconv.Atoi(args[PAGENUMPARAM])
 		if err != nil {
 			return cli.ShowSubcommandHelp(c)	
 		}
-		co := int64(count)
-		p := int64(page)
-		params := v3.NewGetV3JobsParams().WithCount(&co).WithPage(&p)
-		resp, err := sd.Default.V3.GetV3Jobs(params)
+		resp, err := buildRequestGetJobListParams(sd.Default, int64(count), int64(page))
 		if err != nil {
 			return cli.ShowSubcommandHelp(c)	
 		}
@@ -69,3 +66,25 @@ func JobsList(c *cli.Context) error {
 	}
 	return nil
 }
+
+
+func buildRequestGetJobID(trans *sd.ScrewdriverAPIDocumentation, id string) (*v3.GetV3JobsIDOK, error){
+	params := v3.NewGetV3JobsIDParams().WithID(id)
+	return sd.Default.V3.GetV3JobsID(params)
+}
+
+// JobByID Get a specified job by ID returns an error if unable to marshal data or unable to connect
+func JobByID(c *cli.Context) error {
+	if len(c.Args()) == 1 {
+		args := c.Args()
+		resp, err := buildRequestGetJobID(sd.Default, args[JOBIDPARAM])
+		if err != nil {
+			return cli.ShowSubcommandHelp(c)	
+		}
+		formattedPrint(resp)
+	} else {
+		return cli.ShowSubcommandHelp(c)	
+	}
+	return nil
+}
+

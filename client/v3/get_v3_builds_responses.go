@@ -59,6 +59,5 @@ func (o *GetV3BuildsOK) readResponse(response client.Response, consumer httpkit.
 	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && err != io.EOF {
 		return err
 	}
-
 	return nil
 }

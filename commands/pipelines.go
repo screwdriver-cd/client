@@ -2,11 +2,22 @@ package command
 
 import(
 	"strconv"
+	"fmt"
 
 	"github.com/urfave/cli"
 	sd "github.com/screwdriver-cd/client/client"
 	v3 "github.com/screwdriver-cd/client/client/v3"
 )
+
+
+func buildRequestGetPipelines(trans *sd.ScrewdriverAPIDocumentation) (*v3.GetV3PipelinesOK, error) {
+	return trans.V3.GetV3Pipelines(nil)
+}
+
+func buildRequestGetPipelinesParams(trans *sd.ScrewdriverAPIDocumentation, count int64, page int64) (*v3.GetV3PipelinesOK, error){
+	params := v3.NewGetV3PipelinesParams().WithCount(&count).WithPage(&page)
+	return trans.V3.GetV3Pipelines(params)
+}
 
 // PipelinesList handles the get endpoints for pipelines command
 // When number of args are 0, it defaults to getting 50 responses on the first page
@@ -16,16 +27,17 @@ func PipelinesList(c *cli.Context) error {
 	if len(c.Args()) == 0 {
 		resp, err := sd.Default.V3.GetV3Pipelines(nil)
 		if err != nil {
-			return err	
+			fmt.Println(err)
+			return cli.ShowSubcommandHelp(c)
 		}
 		formattedPrint(resp)
 	} else if len(c.Args()) == 2 {
 		args := c.Args()
-		count, err := strconv.Atoi(args[0])
+		count, err := strconv.Atoi(args[COUNTPARAM])
 		if err != nil {
 			return cli.ShowSubcommandHelp(c)	
 		}
-		page, err := strconv.Atoi(args[1])
+		page, err := strconv.Atoi(args[PAGENUMPARAM])
 		if err != nil {
 			return cli.ShowSubcommandHelp(c)	
 		}

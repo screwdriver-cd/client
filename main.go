@@ -10,43 +10,64 @@ import(
 func main(){
 	app := cli.NewApp()
 	app.Name = "Swagger"
-	app.Usage = "wat"
-	idFlag := []cli.Flag{
-			cli.StringFlag{
-				Name: "pipelineID",
-				Value: "",
-				Usage: "Filter for pipeline",
-			},	
-	}
-	buildFlags := []cli.Flag{
-			cli.StringFlag{
-				Name: "jobID",
-				Value: "",
-				Usage: "Filter by Job ID",
-			},
-			cli.StringFlag{
-				Name: "status",
-				Value: "",
-				Usage: "Filter by status",
-			},
-	}
+	app.Usage = "Continuous Delivery"
 	app.Commands = []cli.Command{
 			{
-					Name: "pipelines-list",
-					Usage: "List all pipelines",
-					Action: command.PipelinesList,
-			},	
-			{
-					Name: "jobs-list",
-					Usage: "List jobs",
-					Action: command.JobsList,
-					Flags: idFlag,
+					Name: "pipelines",
+					Usage: "Options for pipelines",
+					Subcommands: []cli.Command{
+							{
+									Name: "list",
+									Usage: "list all pipelines",
+									Action: command.PipelinesList,
+							},
+					},
 			},
 			{
-					Name: "builds-list",
+					Name: "jobs",
+					Usage: "List jobs",
+					Subcommands: []cli.Command {
+							{
+									Name: "list",
+									Usage: "List all jobs",
+									Flags: []cli.Flag{
+											cli.StringFlag{
+												Name: "pipelineID, p",
+												Usage: "Only show jobs for pipeline",
+											},
+									},
+									Action: command.JobsList,
+									ArgsUsage: "[num elements] [page number]",
+							},
+					},
+			},
+			{
+					Name: "builds",
 					Usage: "List Builds",
-					Action: command.BuildList,
-					Flags: buildFlags,
+					Subcommands: []cli.Command{
+						{
+								Name: "list",
+								Usage: "List all builds",
+								Flags: []cli.Flag{
+									cli.StringFlag{
+										Name: "jobID, j",
+										Usage: "Filter builds by job",
+									},
+									cli.StringFlag{
+										Name: "status, s",
+										Usage: "Only show builds of a specific status",
+									},
+								},
+								Action: command.BuildList,
+								ArgsUsage: "[num elements] [page number]",
+						},
+						{
+								Name: "get",
+								Usage: "Get a specific build",
+								ArgsUsage: "<id>",
+								Action: command.BuildsGetID,
+						},
+					},
 			},
 	}
 	app.Run(os.Args)

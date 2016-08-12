@@ -10,12 +10,14 @@ import(
 	model "github.com/screwdriver-cd/client/models"
 )
 
+
+
 // buildsFilterJobs returns the passed v3.GetV3BuildsOK object filters out builds whose jobID does not match what was passed in as flag jobID
 func buildsFilterJobs(resp *v3.GetV3BuildsOK, c *cli.Context) *v3.GetV3BuildsOK {
 	filters := c.String("jobID")
 	if strings.Compare(filters, "") != 0 {
 			res := model.ListOfBuilds{}
-			for _, element := range resp.Payload{ //adding to the same thing
+			for _, element := range resp.Payload{ 
 				if strings.Compare(element.JobID, filters) == 0 {
 					res = append(res, element)
 				} 
@@ -31,7 +33,7 @@ func buildsFilterStatus(resp *v3.GetV3BuildsOK, c *cli.Context) *v3.GetV3BuildsO
 	if strings.Compare(filters, "") != 0 {
 			res := model.ListOfBuilds{}
 			for _, element := range resp.Payload{
-				if strings.Compare(element.Status, filters) != 0 {
+				if strings.Compare(element.Status, filters) == 0 {
 					res = append(res, element)
 				} 
 			}
@@ -40,41 +42,43 @@ func buildsFilterStatus(resp *v3.GetV3BuildsOK, c *cli.Context) *v3.GetV3BuildsO
 	return resp
 }
 
+// buildRequestGetBuildsListParams takes in a transport, page and count
+func buildRequestGetBuildListParams(trans *sd.ScrewdriverAPIDocumentation, count int64, page int64) (*v3.GetV3BuildsOK, error){
+	params := v3.NewGetV3BuildsParams().WithCount(&count).WithPage(&page)
+	return trans.V3.GetV3Builds(params)
+}
+
+// buildRequestGetBuildList takes in a transport, returns the default page (1) and count (50)
+func buildRequestGetBuildList(trans *sd.ScrewdriverAPIDocumentation) (*v3.GetV3BuildsOK, error){
+	return trans.V3.GetV3Builds(nil)					
+}
+
 // BuildList is called by the client command builds-list
 // if # args is 0, defaults to listing out 50 builds on page 1
-// if # args is 1, gets the build with the id passed in as the first argument of the call
 // if # args is 2, gets the first argument number of builds, and the page #
 func BuildList(c *cli.Context) error {
 	if len(c.Args()) == 0 {
-		resp, err := sd.Default.V3.GetV3Builds(nil)
+		resp, err := buildRequestGetBuildList(sd.Default)
 		if err != nil {
 			return cli.ShowSubcommandHelp(c)	
 		}
 		resp = buildsFilterJobs(resp, c)
 		resp = buildsFilterStatus(resp, c)
 		formattedPrint(resp)
-	} else if len(c.Args()) == 1{
-		args := c.Args()	
-		params := v3.NewGetV3BuildsIDParams().WithID(args[0])
-		resp, err := sd.Default.V3.GetV3BuildsID(params)
-		if err != nil {
-			return cli.ShowSubcommandHelp(c)	
-		}
-		formattedPrint(resp)
-	} else if len(c.Args()) == 2{
+	} else if len(c.Args()) == 2{ 
 		args := c.Args()
-		count, err := strconv.Atoi(args[0])
+		count, err := strconv.Atoi(args[COUNTPARAM])
 		if err != nil {
 			return cli.ShowSubcommandHelp(c)	
 		}
-		page, err := strconv.Atoi(args[1])
+		page, err := strconv.Atoi(args[PAGENUMPARAM])
 		if err != nil {
 			return cli.ShowSubcommandHelp(c)	
 		}
-		co := int64(count)
-		p := int64(page)
-		params := v3.NewGetV3BuildsParams().WithCount(&p).WithPage(&co)
-		resp, err := sd.Default.V3.GetV3Builds(params)
+		resp, err := buildRequestGetBuildListParams(sd.Default, int64(count), int64(page))
+		if err != nil {
+			return cli.ShowSubcommandHelp(c)	
+		}
 		resp = buildsFilterJobs(resp, c)
 		resp = buildsFilterStatus(resp, c)
 		formattedPrint(resp)
@@ -83,3 +87,26 @@ func BuildList(c *cli.Context) error {
 	}
 	return nil
 }
+
+// buildRequestGetID builds the request for getID returns the response and an error
+func buildRequestGetID(trans *sd.ScrewdriverAPIDocumentation, id string) (*v3.GetV3BuildsIDOK,error){
+		params := v3.NewGetV3BuildsIDParams().WithID(id)
+		resp, err := trans.V3.GetV3BuildsID(params)	
+		return resp, err
+}
+
+// BuildsGetID, given an ID, get the build information
+func BuildsGetID(c *cli.Context) error {
+		if len(c.Args()) == 1 {
+				args := c.Args()	
+				resp, err := buildRequestGetID(sd.Default, args[BUILDIDPARAM])
+				if err != nil {
+						return cli.ShowSubcommandHelp(c)	
+				}
+				formattedPrint(resp)
+		} else {
+			return cli.ShowSubcommandHelp(c)	
+		}
+		return nil
+}
+
