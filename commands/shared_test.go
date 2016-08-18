@@ -3,7 +3,7 @@ package command
 import(
 	"testing"
 	"os"
-	// "strings"
+	"strings"
 
 	"github.com/urfave/cli"
 	"github.com/stretchr/testify/assert"
@@ -11,9 +11,16 @@ import(
 
 //TODO: compare these to outputs
 func TestFormattedPrint(t *testing.T){
-	formattedPrint("")
+	assert := assert.New(t)
+	err := formattedPrint("")
+	assert.Nil(err)
 	formattedPrint("potato")
+	assert.Nil(err)
 	formattedPrint("{{as}")
+	assert.Nil(err)
+	err = formattedPrint(func(){
+	})
+	assert.Error(err)
 }
 
 func TestGetNumArguments(t *testing.T){
@@ -50,7 +57,7 @@ func TestGetCountAndPage(t *testing.T){
 			return nil
 	}
 	testApp.Run(os.Args)
-	os.Args = []string{"builds", "--count", "tomato", "--page", "swag"}
+	os.Args = []string{"builds", "tomato", "swag"}
 	testApp.Action = func(c *cli.Context) error {
 			count, page, err := getCountAndPage(c)
 			assert.NotNil(err)
@@ -69,28 +76,28 @@ func TestGetCountAndPage(t *testing.T){
 	}
 	testApp.Run(os.Args)
 }
-//
-// func TestGetID(t *testing.T){
-// 	assert := assert.New(t)
-// 	testApp := cli.NewApp()
-// 	testApp.Flags = []cli.Flag{
-// 		cli.StringFlag{Name:"ID",},	
-// 	}
-// 	id := "abc123"
-// 	os.Args =[]string{"--ID", id}
-// 	testApp.Action = func(c *cli.Context) error {
-// 			str, err := getID(c)
-// 			assert.Equal(id, str)
-// 			assert.Nil(err)
-// 			return nil
-// 	}
-// 	testApp.Run(os.Args)
-// 	testApp.Action = func(c *cli.Context) error {
-// 		str, err := getID(c)
-// 		assert.Error(err)
-// 		assert.Equal(strings.Compare(str,""), 0)
-// 		return nil
-// 	}
-// 	os.Args = []string{}
-// 	testApp.Run(os.Args)
-// }
+
+func TestGetID(t *testing.T){
+	assert := assert.New(t)
+	testApp := cli.NewApp()
+	testApp.Flags = []cli.Flag{
+		cli.StringFlag{Name:"ID",},	
+	}
+	id := "abc123"
+	os.Args =[]string{"builds", id}
+	testApp.Action = func(c *cli.Context) error {
+			str, err := getID(c)
+			assert.Equal(id, str)
+			assert.Nil(err)
+			return nil
+	}
+	testApp.Run(os.Args)
+	testApp.Action = func(c *cli.Context) error {
+		str, err := getID(c)
+		assert.Error(err)
+		assert.Equal(strings.Compare(str,""), 0)
+		return nil
+	}
+	os.Args = []string{"builds"}
+	testApp.Run(os.Args)
+}

@@ -10,7 +10,7 @@ import(
 )
 
 const(
-	IDPARAM = 1
+	IDPARAM = 0
 )
 
 const (
@@ -20,12 +20,14 @@ const (
 )
 
 // formattedPrint Marshals and formats the prints
-func formattedPrint(a ...interface{}){
+func formattedPrint(a ...interface{}) error {
 	m, err := json.MarshalIndent(a, " ", "  ")
 	if err != nil {
 		fmt.Println(err)	
+		return err
 	}
 	fmt.Println(string(m))
+	return nil
 }
 
 func getNumArguments(c *cli.Context) int {
@@ -34,20 +36,21 @@ func getNumArguments(c *cli.Context) int {
 
 func getCountAndPage(c *cli.Context) (int, int, error){
 	args := c.Args()
+	var count, page int
+	var err error
 	if len(args) == 2 {
-		count, err := strconv.Atoi(args[COUNTPARAM])
-		page, err := strconv.Atoi(args[PAGENUMPARAM])
-		if err != nil {
-			return 0, 0, err	
+		count, err = strconv.Atoi(args[COUNTPARAM])
+		page, err = strconv.Atoi(args[PAGENUMPARAM])
+		if err == nil {
+			return count, page, nil	
 		}
-		return count, page, nil
 	}
-	return 0,0,errors.New("Invalid number of arguments")
+	return 0,0,errors.New("Invalid Usage")
 }
 
 func getID(c *cli.Context) (string, error) {
 	args := c.Args()
-	if len(args) != 1{
+	if len(args) != 1 {
 		return "", errors.New("Invalid number of parameters")	
 	}
 	return args[IDPARAM], nil 
