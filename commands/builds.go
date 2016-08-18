@@ -1,7 +1,6 @@
 package command
 
 import(
-	"strconv"
 	"strings"
 
 	"github.com/urfave/cli"
@@ -57,34 +56,22 @@ func buildRequestGetBuildList(trans *sd.ScrewdriverAPIDocumentation) (*v3.GetV3B
 // if # args is 0, defaults to listing out 50 builds on page 1
 // if # args is 2, gets the first argument number of builds, and the page #
 func BuildList(c *cli.Context) error {
-	if len(c.Args()) == 0 {
-		resp, err := buildRequestGetBuildList(sd.Default)
-		if err != nil {
-			return cli.ShowSubcommandHelp(c)	
-		}
-		resp = buildsFilterJobs(resp, c)
-		resp = buildsFilterStatus(resp, c)
-		formattedPrint(resp)
-	} else if len(c.Args()) == 2{ 
-		args := c.Args()
-		count, err := strconv.Atoi(args[COUNTPARAM])
-		if err != nil {
-			return cli.ShowSubcommandHelp(c)	
-		}
-		page, err := strconv.Atoi(args[PAGENUMPARAM])
-		if err != nil {
-			return cli.ShowSubcommandHelp(c)	
-		}
-		resp, err := buildRequestGetBuildListParams(sd.Default, int64(count), int64(page))
-		if err != nil {
-			return cli.ShowSubcommandHelp(c)	
-		}
-		resp = buildsFilterJobs(resp, c)
-		resp = buildsFilterStatus(resp, c)
-		formattedPrint(resp)
-	} else {
+	numParams := getNumArguments(c)
+	var err error
+	var resp *v3.GetV3BuildsOK
+	var count, page int
+	if numParams == 0{
+		resp, err = buildRequestGetBuildList(sd.Default)
+	} else if numParams == 2{
+		count, page, err = getCountAndPage(c)
+		resp, err = buildRequestGetBuildListParams(sd.Default,int64(count),int64(page))
+	}
+	if err != nil || resp == nil {
 		return cli.ShowSubcommandHelp(c)	
 	}
+	resp = buildsFilterJobs(resp, c)
+	resp = buildsFilterStatus(resp, c)
+	formattedPrint(resp)
 	return nil
 }
 
@@ -97,16 +84,17 @@ func buildRequestGetID(trans *sd.ScrewdriverAPIDocumentation, id string) (*v3.Ge
 
 // BuildsGetID, given an ID, get the build information
 func BuildsGetID(c *cli.Context) error {
-		if len(c.Args()) == 1 {
-				args := c.Args()	
-				resp, err := buildRequestGetID(sd.Default, args[BUILDIDPARAM])
-				if err != nil {
-						return cli.ShowSubcommandHelp(c)	
-				}
-				formattedPrint(resp)
-		} else {
-			return cli.ShowSubcommandHelp(c)	
+		numParams := getNumArguments(c)	
+		var err error
+		var resp *v3.GetV3BuildsIDOK
+		if numParams == 1{
+			var id string
+			id, err = getID(c)
+			resp, err = buildRequestGetID(sd.Default, id)
 		}
+		if err != nil || resp == nil {
+			return cli.ShowSubcommandHelp(c)
+		}
+		formattedPrint(resp)
 		return nil
 }
-

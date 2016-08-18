@@ -58,7 +58,6 @@ var testBuild = [] struct {
 
 
 func createMocks() model.ListOfBuilds{
-
 	// timeFormat := "2006-01-02T15:04:05Z0700"
 	ret := model.ListOfBuilds{}
 	for _, element := range testBuild{
