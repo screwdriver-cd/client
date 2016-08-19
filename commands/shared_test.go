@@ -2,7 +2,6 @@ package command
 
 import(
 	"testing"
-	"os"
 	"strings"
 
 	"github.com/urfave/cli"
@@ -12,14 +11,13 @@ import(
 //TODO: compare these to outputs
 func TestFormattedPrint(t *testing.T){
 	assert := assert.New(t)
-	err := formattedPrint("")
+	err := FormattedPrint("")
 	assert.Nil(err)
-	formattedPrint("potato")
+	FormattedPrint("potato")
 	assert.Nil(err)
-	formattedPrint("{{as}")
+	FormattedPrint("{{as}")
 	assert.Nil(err)
-	err = formattedPrint(func(){
-	})
+	err = FormattedPrint(func(){})
 	assert.Error(err)
 }
 
@@ -33,13 +31,12 @@ func TestGetNumArguments(t *testing.T){
 		assert.Equal(getNumArguments(c), 0)	
 		return nil
 	}
-	testApp.Run(os.Args)
-	os.Args = []string{"builds", "tomato"}
+	testApp.Run([]string{"builds"})
 	testApp.Action = func(c *cli.Context) error {
 		assert.Equal(getNumArguments(c), 1)
 		return nil	
 	}
-	testApp.Run(os.Args)
+	testApp.Run([]string{"builds", "tomato"})
 }
 
 func TestGetCountAndPage(t *testing.T){
@@ -52,29 +49,27 @@ func TestGetCountAndPage(t *testing.T){
 	testApp.Action = func(c *cli.Context) error {
 			count, page, err := getCountAndPage(c)
 			assert.NotNil(err)
-			assert.Equal(count, 0)
-			assert.Equal(page, 0)
+			assert.Equal(count, int64(0))
+			assert.Equal(page, int64(0))
 			return nil
 	}
-	testApp.Run(os.Args)
-	os.Args = []string{"builds", "tomato", "swag"}
+	testApp.Run([]string{"builds"})
 	testApp.Action = func(c *cli.Context) error {
 			count, page, err := getCountAndPage(c)
 			assert.NotNil(err)
-			assert.Equal(count, 0)
-			assert.Equal(page, 0)
+			assert.Equal(count, int64(0))
+			assert.Equal(page, int64(0))
 			return nil	
 	}
-	testApp.Run(os.Args)
-	os.Args = []string{"builds", "50", "100"}
+	testApp.Run([]string{"builds","tomato","swag"})
 	testApp.Action = func(c *cli.Context) error {
 			count, page, err := getCountAndPage(c)
-			assert.Equal(count, 50)
-			assert.Equal(page, 100)
+			assert.Equal(count, int64(50))
+			assert.Equal(page, int64(100))
 			assert.Nil(err)
 			return nil
 	}
-	testApp.Run(os.Args)
+	testApp.Run([]string{"builds","50","100"})
 }
 
 func TestGetID(t *testing.T){
@@ -84,20 +79,18 @@ func TestGetID(t *testing.T){
 		cli.StringFlag{Name:"ID",},	
 	}
 	id := "abc123"
-	os.Args =[]string{"builds", id}
 	testApp.Action = func(c *cli.Context) error {
 			str, err := getID(c)
 			assert.Equal(id, str)
 			assert.Nil(err)
 			return nil
 	}
-	testApp.Run(os.Args)
+	testApp.Run([]string{"builds", id})
 	testApp.Action = func(c *cli.Context) error {
 		str, err := getID(c)
 		assert.Error(err)
 		assert.Equal(strings.Compare(str,""), 0)
 		return nil
 	}
-	os.Args = []string{"builds"}
-	testApp.Run(os.Args)
+	testApp.Run([]string{"builds"})
 }
