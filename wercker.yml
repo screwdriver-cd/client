@@ -76,13 +76,10 @@ deploy:
     - script: 
         name: bump the version
         code: export VERSION=$(./gitversion --prefix v bump patch)
-    - script:
-        name: add new tag
-        code: git tag $VERSION
 
     - script:
         name: push newly added tag
-        code: git push origin $VERSION
+        code: git push origin --tags
 
     - github-create-release:
         token: $GITHUB_TOKEN
