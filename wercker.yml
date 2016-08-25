@@ -1,4 +1,4 @@
-box: golang
+box: golang:1.7
 
 build:
   steps:
@@ -47,8 +47,8 @@ build:
     - script:
       name: go build
       code: |
-        go build -a -o go-client
-        mv go-client $ORG_SOURCE
+        go build -a -o sd
+        mv sd $ORG_SOURCE
 
 deploy:
   steps:
@@ -64,3 +64,31 @@ deploy:
       hostname: github.com
       fingerprint: 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48
       type: rsa
+
+    - script:
+        name: download git version
+        code: |
+          wget $(wget -q -O - https://api.github.com/repos/screwdriver-cd/gitversion/releases/latest \
+            | awk '/browser_download_url/ { print $2 }' \
+            | sed 's/"//g') \
+            && chmod +x gitversion
+
+    - script: 
+        name: bump the version
+        code: export VERSION=$(./gitversion --prefix v bump patch)
+    - script:
+        name: add new tag
+        code: git tag $VERSION
+
+    - script:
+        name: push newly added tag
+        code: git push origin $VERSION
+
+    - github-create-release:
+        token: $GITHUB_TOKEN
+        tag: $VERSION
+
+    - github-upload-asset:
+        token: $GITHUB_TOKEN
+        file: sd
+        content_type: application/octet-stream
