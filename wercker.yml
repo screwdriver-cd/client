@@ -45,10 +45,16 @@ build:
       code: go test ./...
 
     - script:
-      name: go build
+      name: go build linux
       code: |
-        go build -a -o sd
-        mv sd $ORG_SOURCE
+        env GOOS=linux GOOARCH=amd64 go build -a -o sd-linux
+        mv sd-linux $ORG_SOURCE
+
+    - script:
+        name: go build osx
+        code: |
+          env GOOS=darwin GOOARCH=amd64 go build -a -o sd-mac
+          mv sd-mac $ORG_SOURCE
 
 deploy:
   steps:
@@ -87,5 +93,10 @@ deploy:
 
     - github-upload-asset:
         token: $GITHUB_TOKEN
-        file: sd
+        file: sd-mac
+        content_type: application/octet-stream
+
+    - github-upload-asset:
+        token: $GITHUB_TOKEN
+        file: sd-linux
         content_type: application/octet-stream
