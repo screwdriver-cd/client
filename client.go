@@ -23,10 +23,10 @@ func CreateApp() *cli.App {
 				{
 					Name:  "list",
 					Usage: "List all pipelines",
-					Action: func(c *cli.Context) error {
+					Action: func(c command.Context) error {
 						resp, err := command.PipelinesList(sd.Default, c)
 						if err != nil {
-							return cli.ShowSubcommandHelp(c)
+							return cli.ShowSubcommandHelp(c.(*cli.Context))
 						}
 						command.FormattedPrint(resp)
 						return nil
@@ -48,10 +48,10 @@ func CreateApp() *cli.App {
 							Usage: "Only show jobs for specified pipeline",
 						},
 					},
-					Action: func(c *cli.Context) error {
+					Action: func(c command.Context) error {
 						resp, err := command.JobsList(sd.Default, c)
 						if err != nil {
-							return cli.ShowSubcommandHelp(c)
+							return cli.ShowSubcommandHelp(c.(*cli.Context))
 						}
 						pipelineIDFlag := c.String("pipelineID")
 						if strings.Compare(pipelineIDFlag, "") != 0 {
@@ -81,10 +81,10 @@ func CreateApp() *cli.App {
 							Usage: "Only show builds of a certain status",
 						},
 					},
-					Action: func(c *cli.Context) error {
+					Action: func(c command.Context) error {
 						resp, err := command.BuildsList(sd.Default, c)
 						if err != nil {
-							return cli.ShowSubcommandHelp(c)
+							return cli.ShowSubcommandHelp(c.(*cli.Context))
 						}
 						jobIDFlag := c.String("jobID")
 						if strings.Compare(jobIDFlag, "") != 0 {
@@ -103,10 +103,10 @@ func CreateApp() *cli.App {
 					Name:      "get",
 					Usage:     "Get a specific build",
 					ArgsUsage: "<id>",
-					Action: func(c *cli.Context) error {
+					Action: func(c command.Context) error {
 						resp, err := command.BuildsGetID(sd.Default, c)
 						if err != nil {
-							return cli.ShowSubcommandHelp(c)
+							return cli.ShowSubcommandHelp(c.(*cli.Context))
 						}
 						command.FormattedPrint(resp)
 						return nil

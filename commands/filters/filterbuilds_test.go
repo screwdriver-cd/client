@@ -24,7 +24,7 @@ func TestBuildsFilterStatus(t *testing.T) {
 		statusFlag := c.String("status")
 		res := BuildsFilterStatus(gv3BuildsOK, statusFlag)
 		for _, element := range res.Payload {
-			if element.Status != statusToFilter {
+			if *element.Status != statusToFilter {
 				t.Errorf("Expected Statuses not %s to be filtered out", statusToFilter)
 			}
 		}
@@ -47,7 +47,7 @@ func TestBuildsFilterJobs(t *testing.T) {
 		pipelineIDFlag := c.String("pipelineID")
 		res := BuildsFilterJobs(gv3BuildsOK, pipelineIDFlag)
 		for _, element := range res.Payload {
-			if element.JobID != idToFilter {
+			if *element.JobID != idToFilter {
 				t.Errorf("Expected JobIDs not %s to be filtered out", idToFilter)
 			}
 		}
@@ -102,13 +102,13 @@ func createMocks() model.ListOfBuilds {
 	ret := model.ListOfBuilds{}
 	for _, element := range testBuild {
 		tmpObj := model.GetBuild{
-			Cause:      element.Cause,
-			Container:  &element.Container,
-			CreateTime: element.CreateTime,
-			ID:         element.ID,
-			JobID:      element.JobID,
-			Sha:        &element.Sha,
-			Status:     element.Status,
+			Cause:      &element.Cause,
+			Container:  element.Container,
+			CreateTime: &element.CreateTime,
+			ID:         &element.ID,
+			JobID:      &element.JobID,
+			Sha:        element.Sha,
+			Status:     &element.Status,
 		}
 		ret = append(ret, &tmpObj)
 	}

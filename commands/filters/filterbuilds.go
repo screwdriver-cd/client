@@ -11,7 +11,8 @@ import (
 func BuildsFilterJobs(resp *v3.GetV3BuildsOK, jobIDFilter string) *v3.GetV3BuildsOK {
 	res := model.ListOfBuilds{}
 	for _, element := range resp.Payload {
-		if strings.Compare(element.JobID, jobIDFilter) == 0 {
+		asStr := element.JobID
+		if strings.Compare(*asStr, jobIDFilter) == 0 {
 			res = append(res, element)
 		}
 	}
@@ -20,10 +21,11 @@ func BuildsFilterJobs(resp *v3.GetV3BuildsOK, jobIDFilter string) *v3.GetV3Build
 }
 
 // BuildsFilterStatus filters the builds by status that was passed in as flag status. returns the original v3.GetV3BuildsOK object
-func BuildsFilterStatus(resp *v3.GetV3BuildsOK, buildIDFilter string) *v3.GetV3BuildsOK {
+func BuildsFilterStatus(resp *v3.GetV3BuildsOK, statusFilter string) *v3.GetV3BuildsOK {
 	res := model.ListOfBuilds{}
 	for _, element := range resp.Payload {
-		if strings.Compare(element.Status, buildIDFilter) == 0 {
+		asStr := element.Status
+		if strings.Compare(*asStr, statusFilter) == 0 {
 			res = append(res, element)
 		}
 	}
