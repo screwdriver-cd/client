@@ -1,10 +1,9 @@
 package command
 
 import (
+	"github.com/urfave/cli"
 	"strings"
 	"testing"
-
-	"github.com/urfave/cli"
 )
 
 func TestFormattedPrint(t *testing.T) {
@@ -20,34 +19,13 @@ func TestFormattedPrint(t *testing.T) {
 	}
 }
 
-func TestGetNumArguments(t *testing.T) {
-	testApp := cli.NewApp()
-	testApp.Flags = []cli.Flag{
-		cli.StringFlag{Name: "myFlag"},
-	}
-	testApp.Action = func(c *cli.Context) error {
-		if getNumArguments(c) != 0 {
-			t.Fail()
-		}
-		return nil
-	}
-	testApp.Run([]string{"builds"})
-	testApp.Action = func(c *cli.Context) error {
-		if getNumArguments(c) != 1 {
-			t.Fail()
-		}
-		return nil
-	}
-	testApp.Run([]string{"builds", "tomato"})
-}
-
 func TestGetCountAndPage(t *testing.T) {
 	testApp := cli.NewApp()
 	testApp.Flags = []cli.Flag{
 		cli.StringFlag{Name: "count"},
 		cli.StringFlag{Name: "page"},
 	}
-	testApp.Action = func(c *cli.Context) error {
+	testApp.Action = func(c Context) error {
 		count, page, err := getCountAndPage(c)
 		if err == nil {
 			t.Fail()
@@ -61,7 +39,7 @@ func TestGetCountAndPage(t *testing.T) {
 		return nil
 	}
 	testApp.Run([]string{"builds"})
-	testApp.Action = func(c *cli.Context) error {
+	testApp.Action = func(c Context) error {
 		count, page, err := getCountAndPage(c)
 		if err == nil {
 			t.Fail()
@@ -75,7 +53,7 @@ func TestGetCountAndPage(t *testing.T) {
 		return nil
 	}
 	testApp.Run([]string{"builds", "tomato", "swag"})
-	testApp.Action = func(c *cli.Context) error {
+	testApp.Action = func(c Context) error {
 		count, page, err := getCountAndPage(c)
 		if count != int64(50) {
 			t.Fail()
@@ -97,7 +75,7 @@ func TestGetID(t *testing.T) {
 		cli.StringFlag{Name: "ID"},
 	}
 	id := "abc123"
-	testApp.Action = func(c *cli.Context) error {
+	testApp.Action = func(c Context) error {
 		str, err := getID(c)
 		if id != str {
 			t.Fail()
@@ -108,7 +86,7 @@ func TestGetID(t *testing.T) {
 		return nil
 	}
 	testApp.Run([]string{"builds", id})
-	testApp.Action = func(c *cli.Context) error {
+	testApp.Action = func(c Context) error {
 		str, err := getID(c)
 		if err == nil {
 			t.Fail()

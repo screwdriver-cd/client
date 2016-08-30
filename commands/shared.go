@@ -4,10 +4,23 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
-
 	"github.com/urfave/cli"
+	"strconv"
 )
+
+// Context interface to context definition by urfave/cli
+type Context interface {
+	NumFlags() int
+	Set(name, value string) error
+	GlobalSet(name, value string) error
+	IsSet(name string) bool
+	GlobalIsSet(name string) bool
+	FlagNames() (names []string)
+	GlobalFlagNames() (names []string)
+	Args() cli.Args
+	NArg() int
+	String(name string) string
+}
 
 const (
 	// IDParam Argument for IDParams (general)
@@ -32,15 +45,11 @@ func FormattedPrint(a ...interface{}) error {
 	return nil
 }
 
-func getNumArguments(c *cli.Context) int {
-	return len(c.Args())
-}
-
-func getCountAndPage(c *cli.Context) (int64, int64, error) {
+func getCountAndPage(c Context) (int64, int64, error) {
 	args := c.Args()
 	var count, page int
 	var err error
-	if len(args) == 2 {
+	if c.NArg() == 2 {
 		count, err = strconv.Atoi(args[CountParam])
 		if err != nil {
 			return 0, 0, errors.New("Invalid Usage")
@@ -55,9 +64,9 @@ func getCountAndPage(c *cli.Context) (int64, int64, error) {
 	return 0, 0, errors.New("Invalid Usage")
 }
 
-func getID(c *cli.Context) (string, error) {
+func getID(c Context) (string, error) {
 	args := c.Args()
-	if len(args) != 1 {
+	if c.NArg() != 1 {
 		return "", errors.New("Invalid number of parameters")
 	}
 	return args[IDParam], nil

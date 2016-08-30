@@ -8,7 +8,7 @@ import (
 
 func TestJobsList(t *testing.T) {
 	testApp := cli.NewApp()
-	testApp.Action = func(c *cli.Context) error {
+	testApp.Action = func(c Context) error {
 		_, err := JobsList(sd.Default, c)
 		if err == nil {
 			t.Error("Expected err to be not nil")
@@ -16,7 +16,7 @@ func TestJobsList(t *testing.T) {
 		return nil
 	}
 	testApp.Run([]string{"jobs", "tomato", "screwdriver", "cd", "cry"})
-	testApp.Action = func(c *cli.Context) error {
+	testApp.Action = func(c Context) error {
 		_, err := JobsList(sd.Default, c)
 		if err == nil {
 			t.Error("Expected err to be not nil")
@@ -28,7 +28,7 @@ func TestJobsList(t *testing.T) {
 
 func TestJobByID(t *testing.T) {
 	testApp := cli.NewApp()
-	testApp.Action = func(c *cli.Context) error {
+	testApp.Action = func(c Context) error {
 		_, err := JobByID(sd.Default, c)
 		if err == nil {
 			t.Error("Expected err to be not nil")

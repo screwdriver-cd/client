@@ -8,7 +8,7 @@ import (
 
 func TestBuildsList(t *testing.T) {
 	testApp := cli.NewApp()
-	testApp.Action = func(c *cli.Context) error {
+	testApp.Action = func(c Context) error {
 		_, err := BuildsList(sd.Default, c)
 		if err == nil {
 			t.Error("Expected the error to be not nil")
@@ -16,7 +16,7 @@ func TestBuildsList(t *testing.T) {
 		return nil
 	}
 	testApp.Run([]string{"builds", "stjohn", "jeeer", "peeetscoffee", "noah", "mintree", "deeren", "dtd", "teef", "sin", "shoooo", "fillz coffee"})
-	testApp.Action = func(c *cli.Context) error {
+	testApp.Action = func(c Context) error {
 		_, err := BuildsList(sd.Default, c)
 		if err == nil {
 			t.Error("Expect the error to be not nil")
@@ -28,7 +28,7 @@ func TestBuildsList(t *testing.T) {
 
 func TestBuildsGetID(t *testing.T) {
 	testApp := cli.NewApp()
-	testApp.Action = func(c *cli.Context) error {
+	testApp.Action = func(c Context) error {
 		_, err := BuildsGetID(sd.Default, c)
 		if err == nil {
 			t.Error("Expected error to be nil")
