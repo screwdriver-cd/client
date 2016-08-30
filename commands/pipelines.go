@@ -26,3 +26,13 @@ func PipelinesList(sdAPIClient *sd.ScrewdriverAPIDocumentation, c *cli.Context) 
 		return nil, errors.New("Invalid Number of Arguments")
 	}
 }
+
+// PipelinesGetID get a specific pipeline by ID
+// Requires one argument which is the ID of the pipeline to get information about
+func PipelinesGetID(sdAPIClient *sd.ScrewdriverAPIDocumentation, c *cli.Context) (*v3.GetV3PipelinesIDOK, error) {
+	id, err := getID(c)
+	if err != nil {
+		return nil, err
+	}
+	return sdAPIClient.V3.GetV3PipelinesID(v3.NewGetV3PipelinesIDParams().WithID(id))
+}

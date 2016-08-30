@@ -33,6 +33,19 @@ func CreateApp() *cli.App {
 					},
 					ArgsUsage: "[pagination count] [pagination page]",
 				},
+				{
+					Name:  "get",
+					Usage: "Get a pipeline by ID",
+					Action: func(c *cli.Context) error {
+						resp, err := command.PipelinesGetID(sd.Default, c)
+						if err != nil {
+							return cli.ShowSubcommandHelp(c)
+						}
+						command.FormattedPrint(resp)
+						return nil
+					},
+					ArgsUsage: "<id>",
+				},
 			},
 		},
 		{

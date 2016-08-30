@@ -1,0 +1,61 @@
+hash: 0afb0b80cad1c31ae9b54e93d0ae03bc0b81c562ff9f7dd78f2ad6430a8e0b32
+updated: 2016-08-31T10:20:09.326521277-07:00
+imports:
+- name: github.com/asaskevich/govalidator
+  version: 593d64559f7600f29581a3ee42177f5dbded27a9
+- name: github.com/go-openapi/analysis
+  version: b44dc874b601d9e4e2f6e19140e794ba24bead3b
+- name: github.com/go-openapi/errors
+  version: 4178436c9f2430cdd945c50301cfb61563b56573
+- name: github.com/go-openapi/jsonpointer
+  version: 46af16f9f7b149af66e5d1bd010e3574dc06de98
+- name: github.com/go-openapi/jsonreference
+  version: 13c6e3589ad90f49bd3e3bbe2c2cb3d7a4142272
+- name: github.com/go-openapi/loads
+  version: 18441dfa706d924a39a030ee2c3b1d8d81917b38
+- name: github.com/go-openapi/runtime
+  version: b5bd5f10b3ecfc154ac2bdf3cfe5119d313a81fb
+  subpackages:
+  - client
+- name: github.com/go-openapi/spec
+  version: 6aced65f8501fe1217321abf0749d354824ba2ff
+- name: github.com/go-openapi/strfmt
+  version: d65c7fdb29eca313476e529628176fe17e58c488
+- name: github.com/go-openapi/swag
+  version: 0e04f5e499b19bf51031c01a00f098f25067d8dc
+- name: github.com/go-openapi/validate
+  version: deaf2c9013bc1a7f4c774662259a506ba874d80f
+- name: github.com/go-swagger/go-swagger
+  version: fade7c68fe6ea117733051b041c590569c428d67
+- name: github.com/mailru/easyjson
+  version: 34560e358dc05e2c28f6fda2f5c9e7494a4b9b19
+  subpackages:
+  - buffer
+  - jlexer
+  - jwriter
+- name: github.com/PuerkitoBio/purell
+  version: 8a290539e2e8629dbc4e6bad948158f790ec31f4
+- name: github.com/PuerkitoBio/urlesc
+  version: 5bd2802263f21d8788851d5305584c82a5c75d7e
+- name: github.com/urfave/cli
+  version: a14d7d367bc02b1f57d88de97926727f2d936387
+- name: golang.org/x/net
+  version: 9bc2a3340c92c17a20edcd0080e93851ed58f5d5
+  subpackages:
+  - context
+  - context/ctxhttp
+  - idna
+- name: golang.org/x/text
+  version: d69c40b4be55797923cec7457fac7a244d91a9b6
+  subpackages:
+  - cases
+  - internal/tag
+  - language
+  - runes
+  - secure/bidirule
+  - secure/precis
+  - transform
+  - unicode/bidi
+  - unicode/norm
+  - width
+testImports: []
