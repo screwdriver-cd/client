@@ -125,12 +125,43 @@ func CreateApp() *cli.App {
 						return nil
 					},
 				},
+				{
+					Name:      "steps",
+					Usage:     "Get a step record",
+					ArgsUsage: "<id> <stepName>",
+					Action: func(c *cli.Context) error {
+						resp, err := command.BuildsGetStep(sd.Default, c)
+						if err != nil {
+							return cli.ShowSubcommandHelp(c)
+						}
+						command.FormattedPrint(resp)
+						return nil
+					},
+				},
+				{
+					Name:      "steps-log",
+					Usage:     "Get the logs for a step",
+					ArgsUsage: "<id> <stepName>",
+					Action: func(c *cli.Context) error {
+						resp, err := command.BuildsGetStepLogs(sd.Default, c)
+						if err != nil {
+							return cli.ShowSubcommandHelp(c)
+						}
+						command.FormattedPrint(resp)
+						return nil
+					},
+					Flags: []cli.Flag{
+						cli.IntFlag{
+							Name:  "start, s",
+							Usage: "Start the logs for the step from a specific number",
+						},
+					},
+				},
 			},
 		},
 	}
 	return app
 }
-
 func main() {
 	app := CreateApp()
 	app.Run(os.Args)
