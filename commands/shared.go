@@ -19,6 +19,9 @@ const (
 
 	// JobIDParam Argument number for job ids
 	JobIDParam int = 1
+
+	// StepParam Argument for Step param
+	StepParam = 1
 )
 
 // FormattedPrint Marshals and formats the prints
@@ -37,15 +40,14 @@ func getNumArguments(c *cli.Context) int {
 }
 
 func getCountAndPage(c *cli.Context) (int64, int64, error) {
-	args := c.Args()
 	var count, page int
 	var err error
-	if len(args) == 2 {
-		count, err = strconv.Atoi(args[CountParam])
+	if c.NArg()  == 2 {
+		count, err = strconv.Atoi(c.Args()[CountParam])
 		if err != nil {
 			return 0, 0, errors.New("Invalid Usage")
 		}
-		page, err = strconv.Atoi(args[PageNumParam])
+		page, err = strconv.Atoi(c.Args()[PageNumParam])
 		if err != nil {
 			return int64(count), int64(page), errors.New("Invalid USage")
 		}
@@ -56,9 +58,15 @@ func getCountAndPage(c *cli.Context) (int64, int64, error) {
 }
 
 func getID(c *cli.Context) (string, error) {
-	args := c.Args()
-	if len(args) != 1 {
+	if c.NArg() != 1 {
 		return "", errors.New("Invalid number of parameters")
 	}
-	return args[IDParam], nil
+	return c.Args()[IDParam], nil
+}
+
+func getIDAndStep(c *cli.Context) (string, string, error){
+	if c.NArg() == 2{
+		return c.Args()[IDParam], c.Args()[StepParam], nil
+	}
+	return "", "", errors.New("Invalid number of parameters")
 }
