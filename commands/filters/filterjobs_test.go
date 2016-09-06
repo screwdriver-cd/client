@@ -19,7 +19,7 @@ func TestJobsFilterPipeline(t *testing.T) {
 		pipelineIDFlag := c.String("pipelineID")
 		res := JobsFilterPipeline(gv3JobsOK, pipelineIDFlag)
 		for _, element := range res.Payload {
-			if element.PipelineID != pipelineIDToFilter {
+			if *element.PipelineID != pipelineIDToFilter {
 				t.Errorf("Expected pipelineIDs not %s", pipelineIDToFilter)
 			}
 		}
@@ -31,10 +31,10 @@ func createJobMocks() model.ListOfJobs {
 	ret := model.ListOfJobs{}
 	for _, element := range testJobs {
 		tmpObj := model.GetJob{
-			ID:         element.ID,
-			Name:       element.Name,
-			PipelineID: element.PipelineID,
-			State:      element.State,
+			ID:         &element.ID,
+			Name:       &element.Name,
+			PipelineID: &element.PipelineID,
+			State:      &element.State,
 		}
 		ret = append(ret, &tmpObj)
 	}

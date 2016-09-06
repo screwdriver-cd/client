@@ -11,7 +11,7 @@ import (
 func JobsFilterPipeline(resp *v3.GetV3JobsOK, pipelineID string) *v3.GetV3JobsOK {
 	res := model.ListOfJobs{}
 	for _, element := range resp.Payload {
-		if strings.Compare(pipelineID, element.PipelineID) == 0 {
+		if strings.Compare(pipelineID, *element.PipelineID) == 0 {
 			res = append(res, element)
 		}
 	}

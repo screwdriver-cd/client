@@ -33,3 +33,22 @@ func BuildsGetID(sdAPIClient *sd.ScrewdriverAPIDocumentation, c *cli.Context) (*
 	}
 	return sdAPIClient.V3.GetV3BuildsID(v3.NewGetV3BuildsIDParams().WithID(id))
 }
+
+// BuildsGetStep given an ID and stepName, get the step record
+func BuildsGetStep(sdAPIClient *sd.ScrewdriverAPIDocumentation, c *cli.Context) (*v3.GetV3BuildsIDStepsNameOK, error) {
+	id, stepName, err := getIDAndStep(c)
+	if err != nil {
+		return nil, err
+	}
+	return sdAPIClient.V3.GetV3BuildsIDStepsName(v3.NewGetV3BuildsIDStepsNameParams().WithID(id).WithName(stepName))
+}
+
+// BuildsGetStepLogs given an ID and stepName, with optional flag to be set to specifiy which log number to start
+func BuildsGetStepLogs(sdAPIClient *sd.ScrewdriverAPIDocumentation, c *cli.Context) (*v3.GetV3BuildsIDStepsNameLogsOK, error) {
+	id, stepName, err := getIDAndStep(c)
+	if err != nil {
+		return nil, err
+	}
+	var from int64 = int64(c.Int("start"))
+	return sdAPIClient.V3.GetV3BuildsIDStepsNameLogs(v3.NewGetV3BuildsIDStepsNameLogsParams().WithID(id).WithName(stepName).WithFrom(&from))
+}
